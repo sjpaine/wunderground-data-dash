@@ -1,1 +1,1 @@
-heroku run FLASK_APP=main.py flask run
+web: run FLASK_APP=main.py flask run
