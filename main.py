@@ -16,11 +16,12 @@ app = Flask(__name__)
 def main():
 #Build up input url
 	theMeasures = request.args.get('theMeasures')
+	dateParam = request.args.get('dateParam')
 	print (request.args)
 	if cfg.testResponse != '':
 		Soutput = parseJsonWunderground(cfg.testResponse)
 	else:
-		Surl = cfg.weatherHistory['url'] + keys.APIKeys['WundergroundKey'] + cfg.weatherHistory['url2'] + cfg.weatherHistory['url3']
+		Surl = cfg.weatherHistory['url'] + keys.APIKeys['WundergroundKey'] + cfg.weatherHistory['url2'] + dateParam + cfg.weatherHistory['url3']
 		http = urllib3.PoolManager()
 		print(Surl)
 		r = http.request('GET',Surl)
@@ -70,11 +71,26 @@ def parseJsonWunderground(s1,s2):
 				if key not in datasequences:
 					datasequences[key] = OrderedDict({'title':key,'datapoints':[]})
 				theDate = days['date']
-				temp = {'title': theDate['mon']+'-'+theDate['mday']+'-'+theDate['year']+'-'+theDate['hour']+'-'+theDate['min'],'value':days[key]}
+				temp = {'title': theDate['mon']+'-'+theDate['mday']+'-'+theDate['year']+'-'+theDate['hour']+':'+theDate['min'],'value':days[key]}
 				datasequences[key]['datapoints'].append(temp)
 
-	#print(graph)
-	return jsonify({'graph':graph})
+
+	
+	#format graph
+	dReturn={}
+	dReturn['title']='Daily History'
+	dReturn['datasequences'] = []
+
+	#Fix Format to match TheDash
+	for keys in datasequences:
+		tempArray=[]
+		for items in datasequences[keys]['datapoints']:
+			tempArray.append(items)
+		dReturn['datasequences'].append({'title':datasequences[keys]['title'],'datapoints':tempArray})
+
+
+
+	return (jsonify({'graph':dReturn}))
 
 def is_number(s):
     try:

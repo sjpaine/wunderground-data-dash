@@ -2,7 +2,7 @@
 
 weatherHistory = {'url': 'http://api.wunderground.com/api/',
          'apiKey': 'XX',
-         'url2': '/history_20180105',
+         'url2': '/history_',
          'url3': '/q/pws:ISHANKIL2.json'}
 
 
